@@ -35,6 +35,30 @@ function VendingMachine() {
     { name: '7UP', price: 0.85, quantity: 17 },
     { name: 'Café', price: 0.80, quantity: 20 }
   ]);
+
+
+
+
+
+  const renameItem = (index) => { // função renameItem com paramentro index
+    const newPrice = prompt("Digite o novo preço:");
+    const newQuantity = prompt("Digite a nova quantidade:");
+  
+    if (newPrice !== null && newQuantity !== null) { // verificação se o utilizador adicionou algo ás caixas de texto 
+      const updatedItems = [...items]; // o updatedItems irá buscar todos os produtos e os seus detalhes
+      updatedItems[index] = {
+        ...updatedItems[index],
+        price: parseFloat(newPrice),
+        quantity: parseInt(newQuantity)
+      };
+      setItems(updatedItems);
+    }
+  };
+  
+
+
+
+
   const FaltaPagar = total - intro;
   const troco = FaltaPagar * -1;
 
@@ -79,6 +103,16 @@ function VendingMachine() {
   return (
 
     <div>
+
+
+
+{items.map((item, index) => (
+  <div key={index}>
+    <label>Preço: {item.price}</label>
+    <label>Quantidade: {item.quantity}</label>
+    <button onClick={() => renameItem(index)}>Renomear</button>
+  </div>
+))}
 
       <Link to={'/HelloPage/'} className='config'>
         <button className='config'>Config</button>

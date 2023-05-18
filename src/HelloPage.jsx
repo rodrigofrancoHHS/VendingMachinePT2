@@ -2,11 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 function HelloPage({ items, setItems }) {
-  const [selectedItem, setSelectedItem] = useState({
-    name: '',
-    price: '',
-    quantity: '',
-  });
+
+
+  // armazena o item selecionado
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  debugger
+
+
+  useEffect(() => {
+    const storedSelectedItem = localStorage.getItem('selectedItem');
+    if (storedSelectedItem) {
+      setSelectedItem(JSON.parse(storedSelectedItem));
+    }
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,21 +31,16 @@ function HelloPage({ items, setItems }) {
         item.name === selectedItem.name ? { ...item, ...selectedItem } : item
       )
     );
-    localStorage.setItem('selectedItem', JSON.stringify(selectedItem));
-  };
 
-  useEffect(() => {
-    const storedSelectedItem = localStorage.getItem('selectedItem');
-    if (storedSelectedItem) {
-      setSelectedItem(JSON.parse(storedSelectedItem));
-    }
-  }, []); // O array vazio [] indica que este useEffect será executado apenas uma vez, ao inicializar a página.
+    // Atualiza o valor no localStorage
+  localStorage.setItem('selectedItem', JSON.stringify(selectedItem));
+  };
 
   return (
     <div>
       <h1>HelloPage</h1>
       <form>
-        <select name="name" onChange={handleInputChange} value={selectedItem.name}>
+        <select name="name" onChange={handleInputChange} value={selectedItem?.name}>
           <option value="">Select Item</option>
           {items.map((item, index) => (
             <option key={index} value={item.name}>
@@ -49,7 +53,7 @@ function HelloPage({ items, setItems }) {
         <input
           type="text"
           name="price"
-          value={selectedItem.price || ''}
+          value={selectedItem?.price}
           onChange={handleInputChange}
         />
         <br />
@@ -57,7 +61,7 @@ function HelloPage({ items, setItems }) {
         <input
           type="text"
           name="quantity"
-          value={selectedItem.quantity || ''}
+          value={selectedItem?.quantity}
           onChange={handleInputChange}
         />
         <br />
