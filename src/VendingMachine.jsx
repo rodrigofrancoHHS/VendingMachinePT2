@@ -21,7 +21,11 @@ function VendingMachine() {
     { name: '1 euro', price: 1.00},
     { name: '2 euros', price: 2.00}
   ]);
-  const [items, setItems] = useState([
+
+  /*Desta forma, quando a página for reiniciada, o código verificará se há itens armazenados no localStorage. Se houver, usará esses itens como valor inicial para o estado items.
+  Caso contrário, usará os valores iniciais padrão. */
+  const storedItems = localStorage.getItem('updatedItems');
+  const initialItems = storedItems ? JSON.parse(storedItems) :[
     { name: 'Coca-cola', price: 1.20, quantity: 10 },
     { name: 'Sprite', price: 0.80, quantity: 5 },
     { name: 'Ice-Tea', price: 1.20, quantity: 15 },
@@ -34,24 +38,31 @@ function VendingMachine() {
     { name: 'Água', price: 1.30, quantity: 16 },
     { name: '7UP', price: 0.85, quantity: 17 },
     { name: 'Café', price: 0.80, quantity: 20 }
-  ]);
+  ];
+  const [items, setItems] = useState(initialItems);
 
 
 
 
 
   const renameItem = (index) => { // função renameItem com paramentro index
-    const newPrice = prompt("Digite o novo preço:");
-    const newQuantity = prompt("Digite a nova quantidade:");
+    const newPriceInput = document.getElementById('newPriceInput');
+    const newPrice = newPriceInput.value;
+    const newQuantityInput = document.getElementById('newQuantityInput');
+    const newQuantity = newQuantityInput.value;
   
     if (newPrice !== null && newQuantity !== null) { // verificação se o utilizador adicionou algo ás caixas de texto 
       const updatedItems = [...items]; // o updatedItems irá buscar todos os produtos e os seus detalhes
-      updatedItems[index] = {
+
+      updatedItems[index] = { // vai atualizar a nova quantidade e o novo preço na posição selecionada
         ...updatedItems[index],
         price: parseFloat(newPrice),
         quantity: parseInt(newQuantity)
       };
+
+      //O estado dos items irá ser modificado ...
       setItems(updatedItems);
+      localStorage.setItem('updatedItems', JSON.stringify(updatedItems));
     }
   };
   
@@ -83,7 +94,8 @@ function VendingMachine() {
 
      setCompras(prevCompras => [...prevCompras, novaCompra]);
 
-      localStorage.setItem(moment().format('MMMM Do YYYY, h:mm:ss a'), JSON.stringify(troco));
+      localStorage.setItem(moment().format('Troco: MMMM Do YYYY, h:mm:ss a'), JSON.stringify(troco));
+      localStorage.setItem(moment().format('Total: MMMM Do YYYY, h:mm:ss a'), JSON.stringify(total));
       setIntro(0);
       setTotal(0);
       setQuantidade(0);
@@ -100,19 +112,31 @@ function VendingMachine() {
   values.push(value);
 }
 
+
+
+
+
   return (
 
     <div>
 
 
 
-{items.map((item, index) => (
-  <div key={index}>
+
+
+{items.map((item, index) => ( // irá ser usado o método map para percorrer todos os items da lista 
+  <div key={index} /* irá criar um elemento div para cada item, com o seu atual preço e quantidade e a modificação a seguir */>
+    <label>Preço: {item.price}</label>
+    <input type="text" id="newPriceInput" />
+    <input type="text" id="newQuantityInput" />
     <label>Preço: {item.price}</label>
     <label>Quantidade: {item.quantity}</label>
-    <button onClick={() => renameItem(index)}>Renomear</button>
+    <button onClick={() => renameItem(index)}  /* por fim este botão irá ativar a constante*/>Renomear</button>
   </div>
 ))}
+
+
+
 
       <Link to={'/HelloPage/'} className='config'>
         <button className='config'>Config</button>

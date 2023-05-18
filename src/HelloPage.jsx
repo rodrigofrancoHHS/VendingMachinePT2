@@ -7,9 +7,6 @@ function HelloPage({ items, setItems }) {
   // armazena o item selecionado
   const [selectedItem, setSelectedItem] = useState(null);
 
-  debugger
-
-
   useEffect(() => {
     const storedSelectedItem = localStorage.getItem('selectedItem');
     if (storedSelectedItem) {
