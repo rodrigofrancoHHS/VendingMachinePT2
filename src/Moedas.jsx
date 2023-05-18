@@ -1,20 +1,20 @@
+import moment from 'moment';
 import React, { useEffect } from 'react';
 
 const Moedas = (props) => {
 
   useEffect(() => {
     console.log("Moedas props",props)
-    debugger
-  },[])
+  },[props])
 
 
   
 
   const handleMoedasSelection = (moeda) => {
-    if (props.quantidade > 0) {
+    if (props.quantidade >= 0) {
       props.setIntro(props.intro + moeda.price);
-      localStorage.setItem('tipo de moeda', JSON.stringify(moeda.price));
-      props.setQuantidade(props.quantidade - 1);
+      localStorage.setItem(moment().format('MMMM Do YYYY, h:mm:ss a'), JSON.stringify(moeda));
+      props.setQuantidade(props.quantidade + 1);
       const index = props.moedas.findIndex((m) => m.name === moeda.name);
       props.setMoedas((prevState) => [      ...prevState.slice(0, index),      { ...prevState[index], quantity: prevState[index].quantity + 1 },
         ...prevState.slice(index + 1),
@@ -27,11 +27,13 @@ const Moedas = (props) => {
   const FaltaPagar = props.total - props.intro;
 
   return (
+
+    
     <div>
     <div>
         {props.moedas.map((moeda) => (
           <div key={moeda.name}>
-            <p>Moedas: € {moeda.price.toFixed(2)} &nbsp;&nbsp;  <button onClick={() => handleMoedasSelection(moeda) } disabled={FaltaPagar <= 0}>Inserir</button></p>
+            <p>Moedas: € {moeda.price.toFixed(2)} &nbsp;&nbsp;  <button onClick={() => handleMoedasSelection(moeda) }>Inserir</button></p>
           </div>
         ))}
       </div>
