@@ -41,8 +41,10 @@ function VendingMachine() {
   ];
   const [items, setItems] = useState(initialItems);
 
+  const date = moment().format('MMM');
+
   useEffect(() => {
-    localStorage.setItem('updatedItems', JSON.stringify(items));
+    localStorage.setItem('updatedItems' + date, JSON.stringify(items));
   }, [items]);
 
 
@@ -95,6 +97,10 @@ function VendingMachine() {
 
 
 let faturacao = 0;
+
+// Exibir a faturação total
+console.log(`Faturação Total: ${faturacao}`);
+
 // Percorrer todos os itens no localStorage
 for (let i = 0; i < localStorage.length; i++) {
   const key = localStorage.key(i);
