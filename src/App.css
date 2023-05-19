@@ -74,3 +74,47 @@
   th {
     text-align: left;
   }
+
+
+
+
+
+  .item-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .item-name {
+    font-weight: bold;
+    margin-right: 20px;
+  }
+  
+  .item-price {
+    color: blue;
+    margin-right: 20px;
+  }
+  
+  .new-price-input,
+  .new-quantity-input {
+    width: 100px;
+    margin-right: 10px;
+  }
+  
+  .item-quantity {
+    font-style: italic;
+    margin-right: 20px;
+  }
+  
+  .rename-button {
+    background-color: #f5f5f5;
+    color: #333;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .rename-button:hover {
+    background-color: #ddd;
+  }
+  

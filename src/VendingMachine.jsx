@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Produtos from './Produtos';
 import Moedas from './Moedas';
 import moment from 'moment';
@@ -21,42 +21,29 @@ function VendingMachine() {
     { name: '1 euro', price: 1.00},
     { name: '2 euros', price: 2.00}
   ]);
-  const [items, setItems] = useState([
-    { name: 'Coca-cola', price: 1.20, quantity: 10 },
-    { name: 'Sprite', price: 0.80, quantity: 5 },
-    { name: 'Ice-Tea', price: 1.20, quantity: 15 },
-    { name: 'Pepsi', price: 0.85, quantity: 14 },
-    { name: 'Bongo', price: 0.99, quantity: 9 },
-    { name: 'Monster', price: 1.40, quantity: 20 },
-    { name: 'Guaraná', price: 1.00, quantity: 10 },
-    { name: 'Sumol', price: 1.10, quantity: 1 },
-    { name: 'Chá', price: 1.25, quantity: 4 },
-    { name: 'Água', price: 1.30, quantity: 16 },
-    { name: '7UP', price: 0.85, quantity: 17 },
-    { name: 'Café', price: 0.80, quantity: 20 }
-  ]);
 
+  /*Desta forma, quando a página for reiniciada, o código verificará se há itens armazenados no localStorage. Se houver, usará esses itens como valor inicial para o estado items.
+  Caso contrário, usará os valores iniciais padrão. */
+  const storedItems = localStorage.getItem('updatedItems');
+  const initialItems = storedItems ? JSON.parse(storedItems) :[
+    { name: 'Coca-cola', price: 1.20, quantity: 10, sold: 0},
+    { name: 'Sprite', price: 0.80, quantity: 5, sold: 0},
+    { name: 'Ice-Tea', price: 1.20, quantity: 15, sold: 0},
+    { name: 'Pepsi', price: 0.85, quantity: 14, sold: 0},
+    { name: 'Bongo', price: 0.99, quantity: 9, sold: 0},
+    { name: 'Monster', price: 1.40, quantity: 20, sold: 0},
+    { name: 'Guaraná', price: 1.00, quantity: 10, sold: 0},
+    { name: 'Sumol', price: 1.10, quantity: 1, sold: 0},
+    { name: 'Chá', price: 1.25, quantity: 4, sold: 0},
+    { name: 'Água', price: 1.30, quantity: 16, sold: 0},
+    { name: '7UP', price: 0.85, quantity: 17, sold: 0},
+    { name: 'Café', price: 0.80, quantity: 20, sold: 0}
+  ];
+  const [items, setItems] = useState(initialItems);
 
-
-
-
-  const renameItem = (index) => { // função renameItem com paramentro index
-    const newPrice = prompt("Digite o novo preço:");
-    const newQuantity = prompt("Digite a nova quantidade:");
-  
-    if (newPrice !== null && newQuantity !== null) { // verificação se o utilizador adicionou algo ás caixas de texto 
-      const updatedItems = [...items]; // o updatedItems irá buscar todos os produtos e os seus detalhes
-      updatedItems[index] = {
-        ...updatedItems[index],
-        price: parseFloat(newPrice),
-        quantity: parseInt(newQuantity)
-      };
-      setItems(updatedItems);
-    }
-  };
-  
-
-
+  useEffect(() => {
+    localStorage.setItem('updatedItems', JSON.stringify(items));
+  }, [items]);
 
 
   const FaltaPagar = total - intro;
@@ -83,7 +70,8 @@ function VendingMachine() {
 
      setCompras(prevCompras => [...prevCompras, novaCompra]);
 
-      localStorage.setItem(moment().format('MMMM Do YYYY, h:mm:ss a'), JSON.stringify(troco));
+      localStorage.setItem(moment().format('Troco: MMMM Do YYYY, h:mm:ss a'), JSON.stringify(troco));
+      localStorage.setItem(moment().format('Tot: MMMM Do YYYY, h:mm:ss a'), JSON.stringify(total));
       setIntro(0);
       setTotal(0);
       setQuantidade(0);
@@ -100,25 +88,38 @@ function VendingMachine() {
   values.push(value);
 }
 
+
+
+
+// Percorrer todos os itens no localStorage
+
+
+let faturacao = 0;
+// Percorrer todos os itens no localStorage
+for (let i = 0; i < localStorage.length; i++) {
+  const key = localStorage.key(i);
+  const value = localStorage.getItem(key);
+
+  // Verificar se o item é referente aos valores 'total'
+  if (key.startsWith('Tot:')) {
+    // Converter o valor JSON de volta para um objeto
+    const totalObj = JSON.parse(value);
+
+    // Somar o valor 'total' à faturação
+    faturacao += parseFloat(totalObj);
+  }
+}
+
+
   return (
 
     <div>
 
 
-
-{items.map((item, index) => (
-  <div key={index}>
-    <label>Preço: {item.price}</label>
-    <label>Quantidade: {item.quantity}</label>
-    <button onClick={() => renameItem(index)}>Renomear</button>
-  </div>
-))}
-
       <Link to={'/HelloPage/'} className='config'>
-        <button className='config'>Config</button>
+        <button className='config'>Configurar Items</button>
       </Link>
 
-          <HelloPage items={items} setItems={setItems} /> 
           <Produtos items={items} setItems={setItems} total={total} setTotal={setTotal} intro={intro} setIntro={setIntro} />
           <Moedas moedas = {moedas} setMoedas = {setMoedas} total={total} setTotal = {setTotal} intro = {intro} setIntro = {setIntro} quantidade = {quantidade} setQuantidade = {setQuantidade}/>
 
@@ -135,6 +136,7 @@ function VendingMachine() {
         <div className="modal">
           <div className="modal-content">
             <h2>Valores armazenados</h2>
+            <h2>Faturação Total: <label>{parseFloat(faturacao).toFixed(2)}</label></h2>
             <button onClick={closeModal}>Fechar</button>
             <div className="table-container">
               <table>

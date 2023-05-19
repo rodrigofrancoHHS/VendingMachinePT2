@@ -10,7 +10,6 @@ const Produtos = (props) => {
 
   useEffect(() => {
     console.log("Produtos props",props)
-    debugger
   },[])
 
   const handleItemSelection = (item) => {
@@ -28,7 +27,7 @@ const Produtos = (props) => {
           alert(`Você comprou ${item.name}!`);
 
           // Armazenar o item selecionado no localStorage
-          localStorage.setItem(moment().format('MMMM Do YYYY, h:mm:ss a'), JSON.stringify([...selectedItems, item]));
+          localStorage.setItem(moment().format('vn MMMM Do YYYY, h:mm:ss a'), JSON.stringify([...selectedItems, item]));
 
         } else {
           alert(`Valor insuficiente para comprar ${item.name}!`);
@@ -41,36 +40,40 @@ const Produtos = (props) => {
     }
   };  
 
-  const handleCheckout = () => {
-    const quantityToRemove = {}; // Objeto para armazenar a quantidade de cada item selecionado
-  
-    // Contar a quantidade de cada item selecionado
-    selectedItems.forEach((item) => {
-      if (quantityToRemove[item.name]) { // Se a propriedade já existe, significa que esse item já foi contabilizado anteriormente. 
-        quantityToRemove[item.name] += 1; //  incrementamos a quantidade em 1, somando 1 ao valor da propriedade 
-      } else { // Se a propriedade ainda não existe no objeto quantityToRemove, significa que esse é o primeiro item desse tipo encontrado.
-        quantityToRemove[item.name] = 1; // criamos a propriedade e atribuímos o valor 1
-      }
-    });
-  
-    // Atualizar a quantidade dos itens selecionados
-    Object.keys(quantityToRemove).forEach((itemName) => {
-      const quantity = quantityToRemove[itemName];
-      props.setItems((prevItems) =>
-        prevItems.map((item) => {
-          if (item.name === itemName) {
-            return { ...item, quantity: item.quantity - quantity };
-          }
-          return item;
-        })
-      );
-    });
-  
-    // Reseta a lista de itens selecionados
-    setSelectedItems([]);
-  
-    alert('Compra finalizada!');
-  };
+    const handleCheckout = () => {
+      const quantityToRemove = {}; // Objeto para armazenar a quantidade de cada item selecionado
+    
+      // Contar a quantidade de cada item selecionado
+      selectedItems.forEach((item) => {
+        if (quantityToRemove[item.name]) { // Se a propriedade já existe, significa que esse item já foi contabilizado anteriormente. 
+          quantityToRemove[item.name] += 1; //  incrementamos a quantidade em 1, somando 1 ao valor da propriedade 
+        } else { // Se a propriedade ainda não existe no objeto quantityToRemove, significa que esse é o primeiro item desse tipo encontrado.
+          quantityToRemove[item.name] = 1; // criamos a propriedade e atribuímos o valor 1
+        }
+      });
+
+      
+    
+      // Atualizar a quantidade dos itens selecionados
+      Object.keys(quantityToRemove).forEach((itemName) => {
+        const quantity = quantityToRemove[itemName];
+        props.setItems((prevItems) =>
+          prevItems.map((item) => {
+            if (item.name === itemName) {
+              return { ...item, quantity: item.quantity - quantity, sold: item.sold + quantity };
+            }
+            return item;
+          })
+        );
+      });
+
+      
+    
+      // Reseta a lista de itens selecionados
+      setSelectedItems([]);
+    
+      alert('Compra finalizada!');
+    };
   
   const cancelarCompra = () => {
     const quantityToAdd = {}; // Objeto para armazenar a quantidade de cada item selecionado
@@ -92,9 +95,11 @@ const Produtos = (props) => {
 
         return result < 0 ? 0 : result;
       });
-  
+      
     // Reseta a lista de itens selecionados
     setSelectedItems([]);
+
+    localStorage.clear();
   
     alert('Compra cancelada!');
   });
