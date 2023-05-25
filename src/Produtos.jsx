@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { type } from '@testing-library/user-event/dist/type';
 
 const Produtos = (props) => {
 
@@ -110,34 +109,35 @@ const Produtos = (props) => {
   return (
 
     <div>
-      <h2>Máquina de Venda</h2>
-      <div>
-      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-      {props.items.map((item) => (
-          <div key={item.name} style={{ flexBasis: 'calc(33.33% - 20px)', marginBottom: '20px', marginRight: '20px' }}>
-          <p>{item.name}</p>
-          <p>Preço: € { parseFloat(item.price).toFixed(2)}</p>
-          <p>Quantidade: {item.quantity}</p>
-          <button onClick={() => handleItemSelection(item)}>Comprar</button>
-        </div>
-      ))}
-    </div>
-  </div>
 
-  <br/><br/><br/><br/><br/>
+<div className="flex flex-col items-center justify-center">
+  <h2 className="text-2xl mb-4 mt-0">Máquina de Venda</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4">
+    {props.items.map((item) => (
+      <div key={item.name} className="mb-4 mx-2">
+        <p className="text-center">{item.name}</p>
+        <p className="text-center">Preço: € {parseFloat(item.price).toFixed(2)}</p>
+        <p className="text-center">Quantidade: {item.quantity}</p>
+        <button className="block mx-auto mt-2 bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleItemSelection(item)}>Comprar</button>
+      </div>
+    ))}
+  </div>
+</div>
 
   {/* botão para finalizar a compra */}
   {selectedItems.length > 0 && (
-    <div>
-      <h3>Itens selecionados:</h3>
-      <ul>
+    <div className="flex flex-col items-center justify-center">
+    <div className="p-4 mt-0">
+      <h3 className="text-lg font-semibold mb-2">Itens selecionados:</h3>
+      <ul className="list-disc pl-6 mb-2">
         {selectedItems.map((item) => (
           <li key={item.name}>{item.name} - € {parseFloat(item.price).toFixed(2)}</li>
         ))}
       </ul>
-      <button onClick={handleCheckout}>Finalizar compra</button>
-      <button onClick={cancelarCompra}>Cancelar</button>
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" onClick={handleCheckout}>Finalizar compra</button>
+      <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={cancelarCompra}>Cancelar</button>
     </div>
+  </div>
   )}
 
     </div>

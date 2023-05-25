@@ -41,10 +41,8 @@ function VendingMachine() {
   ];
   const [items, setItems] = useState(initialItems);
 
-  const date = moment().format('MMM');
-
   useEffect(() => {
-    localStorage.setItem('updatedItems' + date, JSON.stringify(items));
+    localStorage.setItem('updatedItems', JSON.stringify(items));
   }, [items]);
 
 
