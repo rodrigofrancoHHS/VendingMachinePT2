@@ -62,22 +62,41 @@ function HelloPage() {
 
   return (
     <div>
-      <Link to={'/'} className='config'>
-        <button className='config'>Voltar ao Início</button>
-      </Link>
+
+      <br/>
+      
+<Link to={'/'}>
+  <button className='py-3 px-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500 text-white font-bold rounded-full shadow-lg transform hover:scale-105 transition-all duration-300'>
+  ↩
+  </button>
+</Link>
 
       <br/><br/><br/><br/><br/><br/>
 
-      {items.map((item, index) => (
-        <div className="item-container" key={index}>
-          <label className="item-name">Item: {item.name}</label>
-          <label className="item-name">Preço: {item.price}</label>
-          <input className="new-price-input" type="text" id={`newPriceInput_${index}`} placeholder="Insira o Novo Preço" />
-          <input className="new-quantity-input" type="text" id={`newQuantityInput_${index}`} placeholder="Insira a Nova Quantidade" />
-          <label className="item-quantity">Quantidade: {item.quantity}</label>
-          <button className="rename-button" onClick={() => renameItem(index)}>Submeter</button>
+      <div className="flex flex-wrap -mx-4">
+  {items.map((item, index) => (
+    <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/4 px-4 mb-4" key={index}>
+      <div className="bg-purple-600 p-4 rounded">
+        <div className="flex justify-center">
+          <label className="text-2xl text-white font-semibold">{item.name}</label>
         </div>
-      ))}
+        <br/>
+        <label className="text-lg text-yellow-300 font-semibold">Preço: {item.price}</label><br/>
+        <label className="text-lg text-white font-semibold">Quantidade: {item.quantity}</label><br/>
+        <input className="w-full px-4 py-2 mt-2 bg-gray-200 rounded" type="text" id={`newPriceInput_${index}`} placeholder="Insira o Novo Preço"/>
+        <input className="w-full px-4 py-2 mt-2 bg-gray-200 rounded" type="text" id={`newQuantityInput_${index}`} placeholder="Insira a Nova Quantidade"/>
+        <br/><br/>
+        <button
+          className="px-4 py-2 mt-2 bg-pink-500 hover:bg-pink-700 text-white font-semibold rounded"
+          onClick={() => renameItem(index)}
+        >
+          Submeter
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
+
 
       <br/><br/><br/><br/><br/><br/>
 

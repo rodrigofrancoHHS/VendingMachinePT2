@@ -111,14 +111,19 @@ const Produtos = (props) => {
     <div>
 
 <div className="flex flex-col items-center justify-center">
-  <h2 className="text-2xl mb-4 mt-0">Máquina de Venda</h2>
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4">
+  <h2 className="text-4xl font-bold mb-8">Máquina de Venda</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-8">
     {props.items.map((item) => (
-      <div key={item.name} className="mb-4 mx-2">
-        <p className="text-center">{item.name}</p>
-        <p className="text-center">Preço: € {parseFloat(item.price).toFixed(2)}</p>
-        <p className="text-center">Quantidade: {item.quantity}</p>
-        <button className="block mx-auto mt-2 bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleItemSelection(item)}>Comprar</button>
+      <div key={item.name} className="bg-white rounded-lg shadow-lg p-6 text-center">
+        <h3 className="text-xl font-semibold mb-4">{item.name}</h3>
+        <p className="text-gray-600 mb-2">Preço: € {parseFloat(item.price).toFixed(2)}</p>
+        <p className="text-gray-600 mb-4">Quantidade: {item.quantity}</p>
+        <button
+          className="w-full bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-full"
+          onClick={() => handleItemSelection(item)}
+        >
+          Comprar
+        </button>
       </div>
     ))}
   </div>
