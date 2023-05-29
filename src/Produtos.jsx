@@ -116,7 +116,7 @@ const Produtos = (props) => {
     {props.items.map((item) => (
       <div key={item.name} className="bg-white rounded-lg shadow-lg p-6 text-center">
         <h3 className="text-xl font-semibold mb-4">{item.name}</h3>
-        <p className="text-gray-600 mb-2">Preço: € {parseFloat(item.price).toFixed(2)}</p>
+        <p className="text-gray-600 mb-2">Preço:  {parseFloat(item.price).toFixed(2)} €</p>
         <p className="text-gray-600 mb-4">Quantidade: {item.quantity}</p>
         <button
           className="w-full bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-full"
