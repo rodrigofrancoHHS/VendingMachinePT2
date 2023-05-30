@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Produtos from './Produtos';
 import Moedas from './Moedas';
 import moment from 'moment';
-import { Link, Route, Router, Routes } from 'react-router-dom';
-import HelloPage from './HelloPage';
+import { Link} from 'react-router-dom';
 
 
 function VendingMachine() {
