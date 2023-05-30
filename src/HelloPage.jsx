@@ -76,7 +76,7 @@ function HelloPage() {
       <div className="flex flex-wrap -mx-4">
   {items.map((item, index) => (
     <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/4 px-4 mb-4" key={index}>
-      <div className="bg-purple-600 p-4 rounded-md shadow-lg">
+      <div className="bg-blue-600 p-4 rounded-md shadow-lg">
         <div className="flex justify-center">
           <label className="text-2xl text-white font-serif">{item.name}</label>
         </div>
@@ -94,7 +94,7 @@ function HelloPage() {
         <br/><br/>
         <div className='flex justify-center'>
           <button
-            className="px-4 py-2 mt-2 bg-pink-500 hover:bg-pink-700 text-white font-semibold rounded"
+            className="px-4 py-2 mt-2 bg-black hover:bg-black text-white font-semibold rounded"
             onClick={() => renameItem(index)}
           >
             Submeter

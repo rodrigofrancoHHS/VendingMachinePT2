@@ -119,7 +119,7 @@ const Produtos = (props) => {
         <p className="text-gray-600 mb-2">Preço:  {parseFloat(item.price).toFixed(2)} €</p>
         <p className="text-gray-600 mb-4">Quantidade: {item.quantity}</p>
         <button
-          className="w-full bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-full"
+          className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
           onClick={() => handleItemSelection(item)}
         >
           Comprar
