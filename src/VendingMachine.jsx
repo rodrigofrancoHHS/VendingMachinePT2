@@ -25,27 +25,42 @@ function VendingMachine() {
   /*Desta forma, quando a página for reiniciada, o código verificará se há itens armazenados no localStorage. Se houver, usará esses itens como valor inicial para o estado items.
   Caso contrário, usará os valores iniciais padrão. */
   const storedItems = localStorage.getItem('updatedItems');
-  const initialItems = storedItems ? JSON.parse(storedItems) :[
-    { name: 'Coca-cola', price: 1.20, quantity: 10, sold: 0},
-    { name: 'Sprite', price: 0.80, quantity: 5, sold: 0},
-    { name: 'Ice-Tea', price: 1.20, quantity: 15, sold: 0},
-    { name: 'Pepsi', price: 0.85, quantity: 14, sold: 0},
-    { name: 'Bongo', price: 0.99, quantity: 9, sold: 0},
-    { name: 'Monster', price: 1.40, quantity: 20, sold: 0},
-    { name: 'Guaraná', price: 1.00, quantity: 10, sold: 0},
-    { name: 'Sumol', price: 1.10, quantity: 1, sold: 0},
-    { name: 'Chá', price: 1.25, quantity: 4, sold: 0},
-    { name: 'Água', price: 1.30, quantity: 16, sold: 0},
-    { name: '7UP', price: 0.85, quantity: 17, sold: 0},
-    { name: 'Café', price: 0.80, quantity: 20, sold: 0}
-  ];
-  const [items, setItems] = useState(initialItems);
+const [items, setItems] = useState([]);
 
+<<<<<<< Updated upstream
   const date = moment().format('MMM');
 
   useEffect(() => {
     localStorage.setItem('updatedItems' + date, JSON.stringify(items));
   }, [items]);
+=======
+const apiUrl = 'https://localhost:7136';
+
+useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/api/TodosProdutos/ListadeProdutos`);
+      const produtosCarregados = await response.json();
+
+      //request ao api
+
+      setItems(produtosCarregados);
+    } catch (error) {
+      console.error('Erro ao obter os produtos da API:', error);
+    }
+  };
+
+  if (storedItems) {
+    setItems(JSON.parse(storedItems));
+  } else {
+    fetchProducts();
+  }
+}, []);
+
+useEffect(() => {
+  localStorage.setItem('updatedItems', JSON.stringify(items));
+}, [items]);
+>>>>>>> Stashed changes
 
 
   const FaltaPagar = total - intro;
