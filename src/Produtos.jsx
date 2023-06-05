@@ -25,9 +25,6 @@ const Produtos = (props) => {
           setSelectedItems([...selectedItems, item]); // adiciona o item aos selecionados
           alert(`Você comprou ${item.name}!`);
 
-          // Armazenar o item selecionado no localStorage
-          localStorage.setItem(moment().format('vn MMMM Do YYYY, h:mm:ss a'), JSON.stringify([...selectedItems, item]));
-
         } else {
           alert(`Valor insuficiente para comprar ${item.name}!`);
         }
@@ -51,15 +48,35 @@ const Produtos = (props) => {
         }
       });
 
-      
+      const apiUrl = 'https://localhost:7136';
     
-      // Atualizar a quantidade dos itens selecionados
-      Object.keys(quantityToRemove).forEach((itemName) => {
+      Object.keys(quantityToRemove).forEach(async (itemName) => {
         const quantity = quantityToRemove[itemName];
         props.setItems((prevItems) =>
-          prevItems.map((item) => {
+          prevItems.map(async (item) => {
             if (item.name === itemName) {
-              return { ...item, quantity: item.quantity - quantity, sold: item.sold + quantity };
+              const updatedItem = [{ ...item, quantity: item.quantity - quantity, sold: item.sold + quantity }];
+              try {
+                const response = await fetch(`${apiUrl}/api/TodosProdutos/InserirAtualizarProdutos`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(updatedItem),
+                });
+                if (response.ok) {
+                  // Atualização bem-sucedida no API
+                  return updatedItem;
+                } else {
+                  // Tratar erro de atualização no API
+                  console.error('Erro ao atualizar o produto no API');
+                  return item;
+                }
+              } catch (error) {
+                // Tratar erro de conexão ou outros erros
+                console.error('Erro ao conectar-se com o API:', error);
+                return item;
+              }
             }
             return item;
           })

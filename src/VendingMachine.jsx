@@ -21,37 +21,27 @@ function VendingMachine() {
     { name: '2 euros', price: 2.00}
   ]);
 
+  
   /*Desta forma, quando a página for reiniciada, o código verificará se há itens armazenados no localStorage. Se houver, usará esses itens como valor inicial para o estado items.
-  Caso contrário, usará os valores iniciais padrão. */
-  const storedItems = localStorage.getItem('updatedItems');
-const [items, setItems] = useState([]);
-
-const apiUrl = 'https://localhost:7136';
-
-useEffect(() => {
-  const fetchProducts = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/api/TodosProdutos/ListadeProdutos`);
-      const produtosCarregados = await response.json();
-
-      //request ao api
-
-      setItems(produtosCarregados);
-    } catch (error) {
-      console.error('Erro ao obter os produtos da API:', error);
-    }
-  };
-
-  if (storedItems) {
-    setItems(JSON.parse(storedItems));
-  } else {
+  Caso contrário, usará os valores iniciais padrão. */  
+  const [items, setItems] = useState([]);
+  
+  const apiUrl = 'https://localhost:7136';
+  
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/api/TodosProdutos/ListadeProdutos`);
+        const produtosCarregados = await response.json();
+  
+        setItems(produtosCarregados);
+      } catch (error) {
+        console.error('Erro ao obter os produtos da API:', error);
+      }
+    };
+  
     fetchProducts();
-  }
-}, []);
-
-useEffect(() => {
-  localStorage.setItem('updatedItems', JSON.stringify(items));
-}, [items]);
+  }, []);
 
 
   const FaltaPagar = total - intro;
