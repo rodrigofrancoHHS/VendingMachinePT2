@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import moment from 'moment';
 
 const Produtos = (props) => {
 
@@ -48,6 +47,26 @@ const Produtos = (props) => {
         }
       });
 
+      /*
+      
+      // Atualizar a quantidade dos itens selecionados
+      Object.keys(quantityToRemove).forEach((itemName) => {
+
+        const quantity = quantityToRemove[itemName];
+        
+        props.setItems((prevItems) =>
+          prevItems.map((item) => {
+            if (item.name === itemName) {
+              return { ...item, quantity: item.quantity - quantity, sold: item.sold + quantity };
+            }
+            return item;
+          })
+        );
+      });
+
+
+      */
+
       const apiUrl = 'https://localhost:7136';
     
       Object.keys(quantityToRemove).forEach(async (itemName) => {
@@ -56,7 +75,7 @@ const Produtos = (props) => {
           prevItems.map(async (item) => {
             if (item.name === itemName) {
               const updatedItem = [{ ...item, quantity: item.quantity - quantity, sold: item.sold + quantity }];
-              try {
+              try {   
                 const response = await fetch(`${apiUrl}/api/TodosProdutos/InserirAtualizarProdutos`, {
                   method: 'POST',
                   headers: {
@@ -65,6 +84,7 @@ const Produtos = (props) => {
                   body: JSON.stringify(updatedItem),
                 });
                 if (response.ok) {
+                  debugger;
                   // Atualização bem-sucedida no API
                   return updatedItem;
                 } else {

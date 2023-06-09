@@ -7,24 +7,25 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 function HelloPage() {
-  const storedItems = localStorage.getItem('updatedItems');
-  const initialItems = storedItems
-    ? JSON.parse(storedItems)
-    : [
-      { name: 'Coca-cola', price: 1.20, quantity: 10, sold: 0},
-      { name: 'Sprite', price: 0.80, quantity: 5, sold: 0},
-      { name: 'Ice-Tea', price: 1.20, quantity: 15, sold: 0},
-      { name: 'Pepsi', price: 0.85, quantity: 14, sold: 0},
-      { name: 'Bongo', price: 0.99, quantity: 9, sold: 0},
-      { name: 'Monster', price: 1.40, quantity: 20, sold: 0},
-      { name: 'Guaraná', price: 1.00, quantity: 10, sold: 0},
-      { name: 'Sumol', price: 1.10, quantity: 1, sold: 0},
-      { name: 'Chá', price: 1.25, quantity: 4, sold: 0},
-      { name: 'Água', price: 1.30, quantity: 16, sold: 0},
-      { name: '7UP', price: 0.85, quantity: 17, sold: 0},
-      { name: 'Café', price: 0.80, quantity: 20, sold: 0}
-      ];
-  const [items, setItems] = useState(initialItems);
+  const [items, setItems] = useState([]);
+  
+  const apiUrl = 'https://localhost:7136';
+  
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/api/TodosProdutos/ListadeProdutos`);
+        const produtosCarregados = await response.json();
+  
+        setItems(produtosCarregados);
+      } catch (error) {
+        console.error('Erro ao obter os produtos da API:', error);
+      }
+    };
+  
+    fetchProducts();
+  }, []);
+
 
   const renameItem = (index) => { // cria uma constante que irá rever todos os produtos um por um
     const newPriceInput = document.getElementById(`newPriceInput_${index}`);
