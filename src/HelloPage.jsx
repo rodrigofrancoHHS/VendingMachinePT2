@@ -24,7 +24,7 @@ function HelloPage() {
     };
   
     fetchProducts();
-  }, []);
+  }, [items]);
 
 
   const renameItem = async (index) => {
@@ -81,6 +81,66 @@ function HelloPage() {
   ];
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    price: '',
+    quantity: ''
+  });
+
+  const handleNewProductChange = (event) => {
+    const { name, value } = event.target;
+    setNewProduct((prevProduct) => ({
+      ...prevProduct,
+      [name]: value
+    }));
+  };
+
+  const addNewProduct = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/api/TodosProdutos/InserirAtualizarProdutos`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify([...items, newProduct])
+      });
+  
+      if (response.ok) {
+        const responseData = await response.json();
+        setItems(responseData);
+        setNewProduct({
+          name: '',
+          price: '',
+          quantity: ''
+        });
+      } else {
+        console.error('Erro ao adicionar o produto à API');
+      }
+    } catch (error) {
+      console.error('Erro ao conectar-se com a API:', error);
+    }
+  };
+  
+
+
+
+
+
+  
+
+
   return (
     <div>
 
@@ -124,6 +184,62 @@ function HelloPage() {
       </div>
     </div>
   ))}
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/4 px-4 mb-4">
+  <div className="bg-blue-600 p-4 rounded-md shadow-lg">
+    <div className="flex justify-center">
+      <label className="text-2xl text-white font-serif">Novo Produto</label>
+    </div>
+    <br />
+    <input
+      className="w-full px-4 py-2 mt-2 bg-gray-200 rounded"
+      type="text"
+      name="name"
+      value={newProduct.name}
+      onChange={handleNewProductChange}
+      placeholder="Nome do Produto"
+    />
+    <br /><br />
+    <input
+      className="w-full px-4 py-2 mt-2 bg-gray-200 rounded"
+      type="text"
+      name="price"
+      value={newProduct.price}
+      onChange={handleNewProductChange}
+      placeholder="Preço do Produto"
+    />
+    <br /><br />
+    <input
+      className="w-full px-4 py-2 mt-2 bg-gray-200 rounded"
+      type="text"
+      name="quantity"
+      value={newProduct.quantity}
+      onChange={handleNewProductChange}
+      placeholder="Quantidade do Produto"
+    />
+    <br /><br />
+    <div className="flex justify-center">
+      <button
+        className="px-4 py-2 mt-2 bg-black hover:bg-black text-white font-semibold rounded"
+        onClick={addNewProduct}
+      >
+        Adicionar
+      </button>
+    </div>
+  </div>
 </div>
 
 
