@@ -29,6 +29,7 @@ function VendingMachine() {
   const apiUrl = 'https://localhost:7136';
   
   useEffect(() => {
+    debugger;
     const fetchProducts = async () => {
       try {
         const response = await fetch(`${apiUrl}/api/TodosProdutos/ListadeProdutos`);

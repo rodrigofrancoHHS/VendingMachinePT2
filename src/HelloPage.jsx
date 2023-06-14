@@ -27,19 +27,16 @@ function HelloPage() {
   }, []);
 
 
-  const renameItem = (index) => { // cria uma constante que irá rever todos os produtos um por um
+  const renameItem = async (index) => {
     const newPriceInput = document.getElementById(`newPriceInput_${index}`);
     const newPrice = newPriceInput.value;
     const newQuantityInput = document.getElementById(`newQuantityInput_${index}`);
     const newQuantity = newQuantityInput.value;
-
-    
-
-
-    if (newPrice !== '' && newQuantity !== '') { //faz a verificação se os números do novo preço e nova quantidade estão vazios
-      const updatedItems = items.map((item, i) => { // vai buscar todos os valores dos items por index, ou seja um por um
-        if (i === index) { // verifica  se o indice presente é igual ao selecionado nos inputs acima
-          return { // retorna o item e as suas novas props
+  
+    if (newPrice !== '' && newQuantity !== '') {
+      const updatedItems = items.map((item, i) => {
+        if (i === index) {
+          return {
             ...item,
             price: parseFloat(newPrice),
             quantity: parseInt(newQuantity),
@@ -47,9 +44,32 @@ function HelloPage() {
         }
         return item;
       });
+  
+      setItems(updatedItems);
 
-      setItems(updatedItems); // atualiza o estado do produto
-      localStorage.setItem('updatedItems', JSON.stringify(updatedItems)); // adiciona á localstorage
+  
+      try {
+        const response = await fetch(`${apiUrl}/api/TodosProdutos/InserirAtualizarProdutos`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedItems),
+        });
+  
+        if (response.ok) {
+          const responseData = await response.json();
+          setItems(responseData);
+
+          //Limpar as caixas de texto
+          newPriceInput.value = '';
+          newQuantityInput.value = '';
+        } else {
+          console.error('Erro ao atualizar os produtos na API');
+        }
+      } catch (error) {
+        console.error('Erro ao conectar-se com a API:', error);
+      }
     }
   };
 

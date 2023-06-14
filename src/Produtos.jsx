@@ -35,81 +35,60 @@ const Produtos = (props) => {
     }
   };  
 
-    const handleCheckout = () => {
-      const quantityToRemove = {}; // Objeto para armazenar a quantidade de cada item selecionado
-    
-      // Contar a quantidade de cada item selecionado
-      selectedItems.forEach((item) => {
-        if (quantityToRemove[item.name]) { // Se a propriedade já existe, significa que esse item já foi contabilizado anteriormente. 
-          quantityToRemove[item.name] += 1; //  incrementamos a quantidade em 1, somando 1 ao valor da propriedade 
-        } else { // Se a propriedade ainda não existe no objeto quantityToRemove, significa que esse é o primeiro item desse tipo encontrado.
-          quantityToRemove[item.name] = 1; // criamos a propriedade e atribuímos o valor 1
+  const handleCheckout = async () => {
+    const quantityToRemove = {}; // Objeto para armazenar a quantidade de cada item selecionado
+  
+    // Contar a quantidade de cada item selecionado
+    selectedItems.forEach((item) => {
+      if (quantityToRemove[item.name]) {
+        quantityToRemove[item.name] += 1;
+      } else {
+        quantityToRemove[item.name] = 1;
+      }
+    });
+  
+    const apiUrl = 'https://localhost:7136';
+  
+    try {
+      const updatePromises = Object.keys(quantityToRemove).map(async (itemName) => {
+        const quantity = quantityToRemove[itemName];
+        const updatedItems = props.items.map((item) => {
+          if (item.name === itemName) {
+            return { ...item, quantity: item.quantity - quantity, sold: item.sold + quantity };
+          }
+          return item;
+        });
+  
+        const response = await fetch(`${apiUrl}/api/TodosProdutos/InserirAtualizarProdutos`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedItems),
+        });
+  
+        if (response.ok) {
+          return updatedItems;
+        } else {
+          console.error('Erro ao atualizar o produto no API');
+          return props.items;
         }
       });
-
-      /*
-      
-      // Atualizar a quantidade dos itens selecionados
-      Object.keys(quantityToRemove).forEach((itemName) => {
-
-        const quantity = quantityToRemove[itemName];
-        
-        props.setItems((prevItems) =>
-          prevItems.map((item) => {
-            if (item.name === itemName) {
-              return { ...item, quantity: item.quantity - quantity, sold: item.sold + quantity };
-            }
-            return item;
-          })
-        );
-      });
-
-
-      */
-
-      const apiUrl = 'https://localhost:7136';
-    
-      Object.keys(quantityToRemove).forEach(async (itemName) => {
-        const quantity = quantityToRemove[itemName];
-        props.setItems((prevItems) =>
-          prevItems.map(async (item) => {
-            if (item.name === itemName) {
-              const updatedItem = [{ ...item, quantity: item.quantity - quantity, sold: item.sold + quantity }];
-              try {   
-                const response = await fetch(`${apiUrl}/api/TodosProdutos/InserirAtualizarProdutos`, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify(updatedItem),
-                });
-                if (response.ok) {
-                  debugger;
-                  // Atualização bem-sucedida no API
-                  return updatedItem;
-                } else {
-                  // Tratar erro de atualização no API
-                  console.error('Erro ao atualizar o produto no API');
-                  return item;
-                }
-              } catch (error) {
-                // Tratar erro de conexão ou outros erros
-                console.error('Erro ao conectar-se com o API:', error);
-                return item;
-              }
-            }
-            return item;
-          })
-        );
-      });
-
-      
-    
-      // Reseta a lista de itens selecionados
+  
+      const updatedItems = await Promise.all(updatePromises);
+  
+      // Atualizar o estado do React com os dados retornados pela API
+      props.setItems(updatedItems.flat());
       setSelectedItems([]);
-    
+  
       alert('Compra finalizada!');
-    };
+    } catch (error) {
+      console.error('Erro ao conectar-se com o API:', error);
+    }
+  };
+  
+
+    
   
   const cancelarCompra = () => {
     const quantityToAdd = {}; // Objeto para armazenar a quantidade de cada item selecionado
