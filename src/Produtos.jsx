@@ -35,57 +35,36 @@ const Produtos = (props) => {
     }
   };  
 
+  
+  
+  
   const handleCheckout = async () => {
-    const quantityToRemove = {}; // Objeto para armazenar a quantidade de cada item selecionado
-  
-    // Contar a quantidade de cada item selecionado
-    selectedItems.forEach((item) => {
-      if (quantityToRemove[item.name]) {
-        quantityToRemove[item.name] += 1;
-      } else {
-        quantityToRemove[item.name] = 1;
-      }
-    });
-  
-    const apiUrl = 'https://localhost:7136';
-  
     try {
-      const updatePromises = Object.keys(quantityToRemove).map(async (itemName) => {
-        const quantity = quantityToRemove[itemName];
-        const updatedItems = props.items.map((item) => {
-          if (item.name === itemName) {
-            return { ...item, quantity: item.quantity - quantity, sold: item.sold + quantity };
-          }
-          return item;
-        });
-  
-        const response = await fetch(`${apiUrl}/api/TodosProdutos/InserirAtualizarProdutos`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(updatedItems),
-        });
-  
-        if (response.ok) {
-          return updatedItems;
-        } else {
-          console.error('Erro ao atualizar o produto no API');
-          return props.items;
-        }
+      const apiUrl = 'https://localhost:7136';
+      const response = await fetch(`${apiUrl}/api/TodosProdutos/Checkout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(selectedItems),
       });
+
+      
   
-      const updatedItems = await Promise.all(updatePromises);
-  
-      // Atualizar o estado do React com os dados retornados pela API
-      props.setItems(updatedItems.flat());
-      setSelectedItems([]);
-  
-      alert('Compra finalizada!');
+      if (response.ok) {
+        const updatedItems = await response.json();
+        props.setItems(updatedItems);
+        setSelectedItems([]);
+        alert('Compra finalizada!');
+      } else {
+        console.error('Erro ao realizar o checkout:', response.statusText);
+      }
     } catch (error) {
-      console.error('Erro ao conectar-se com o API:', error);
+      console.error('Erro ao conectar-se com a API:', error);
     }
   };
+
+
   
 
     
