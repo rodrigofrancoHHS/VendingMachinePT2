@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import moment from 'moment';
-import { type } from '@testing-library/user-event/dist/type';
 
 const Produtos = (props) => {
 
@@ -10,7 +8,6 @@ const Produtos = (props) => {
 
   useEffect(() => {
     console.log("Produtos props",props)
-    debugger
   },[])
 
   const handleItemSelection = (item) => {
@@ -27,9 +24,6 @@ const Produtos = (props) => {
           setSelectedItems([...selectedItems, item]); // adiciona o item aos selecionados
           alert(`Você comprou ${item.name}!`);
 
-          // Armazenar o item selecionado no localStorage
-          localStorage.setItem(moment().format('MMMM Do YYYY, h:mm:ss a'), JSON.stringify([...selectedItems, item]));
-
         } else {
           alert(`Valor insuficiente para comprar ${item.name}!`);
         }
@@ -41,36 +35,60 @@ const Produtos = (props) => {
     }
   };  
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     const quantityToRemove = {}; // Objeto para armazenar a quantidade de cada item selecionado
   
     // Contar a quantidade de cada item selecionado
     selectedItems.forEach((item) => {
-      if (quantityToRemove[item.name]) { // Se a propriedade já existe, significa que esse item já foi contabilizado anteriormente. 
-        quantityToRemove[item.name] += 1; //  incrementamos a quantidade em 1, somando 1 ao valor da propriedade 
-      } else { // Se a propriedade ainda não existe no objeto quantityToRemove, significa que esse é o primeiro item desse tipo encontrado.
-        quantityToRemove[item.name] = 1; // criamos a propriedade e atribuímos o valor 1
+      if (quantityToRemove[item.name]) {
+        quantityToRemove[item.name] += 1;
+      } else {
+        quantityToRemove[item.name] = 1;
       }
     });
   
-    // Atualizar a quantidade dos itens selecionados
-    Object.keys(quantityToRemove).forEach((itemName) => {
-      const quantity = quantityToRemove[itemName];
-      props.setItems((prevItems) =>
-        prevItems.map((item) => {
+    const apiUrl = 'https://localhost:7136';
+  
+    try {
+      const updatePromises = Object.keys(quantityToRemove).map(async (itemName) => {
+        const quantity = quantityToRemove[itemName];
+        const updatedItems = props.items.map((item) => {
           if (item.name === itemName) {
-            return { ...item, quantity: item.quantity - quantity };
+            return { ...item, quantity: item.quantity - quantity, sold: item.sold + quantity };
           }
           return item;
-        })
-      );
-    });
+        });
   
-    // Reseta a lista de itens selecionados
-    setSelectedItems([]);
+        const response = await fetch(`${apiUrl}/api/TodosProdutos/InserirAtualizarProdutos`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedItems),
+        });
   
-    alert('Compra finalizada!');
+        if (response.ok) {
+          return updatedItems;
+        } else {
+          console.error('Erro ao atualizar o produto no API');
+          return props.items;
+        }
+      });
+  
+      const updatedItems = await Promise.all(updatePromises);
+  
+      // Atualizar o estado do React com os dados retornados pela API
+      props.setItems(updatedItems.flat());
+      setSelectedItems([]);
+  
+      alert('Compra finalizada!');
+    } catch (error) {
+      console.error('Erro ao conectar-se com o API:', error);
+    }
   };
+  
+
+    
   
   const cancelarCompra = () => {
     const quantityToAdd = {}; // Objeto para armazenar a quantidade de cada item selecionado
@@ -92,9 +110,11 @@ const Produtos = (props) => {
 
         return result < 0 ? 0 : result;
       });
-  
+      
     // Reseta a lista de itens selecionados
     setSelectedItems([]);
+
+    localStorage.clear();
   
     alert('Compra cancelada!');
   });
@@ -105,34 +125,40 @@ const Produtos = (props) => {
   return (
 
     <div>
-      <h2>Máquina de Venda</h2>
-      <div>
-      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-      {props.items.map((item) => (
-          <div key={item.name} style={{ flexBasis: 'calc(33.33% - 20px)', marginBottom: '20px', marginRight: '20px' }}>
-          <p>{item.name}</p>
-          <p>Preço: € { parseFloat(item.price).toFixed(2)}</p>
-          <p>Quantidade: {item.quantity}</p>
-          <button onClick={() => handleItemSelection(item)}>Comprar</button>
-        </div>
-      ))}
-    </div>
-  </div>
 
-  <br/><br/><br/><br/><br/>
+<div className="flex flex-col items-center justify-center">
+  <h2 className="text-4xl font-bold mb-8">Máquina de Venda</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-8">
+    {props.items.map((item) => (
+      <div key={item.name} className="bg-white rounded-lg shadow-lg p-6 text-center">
+        <h3 className="text-xl font-semibold mb-4">{item.name}</h3>
+        <p className="text-gray-600 mb-2">Preço:  {parseFloat(item.price).toFixed(2)} €</p>
+        <p className="text-gray-600 mb-4">Quantidade: {item.quantity}</p>
+        <button
+          className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+          onClick={() => handleItemSelection(item)}
+        >
+          Comprar
+        </button>
+      </div>
+    ))}
+  </div>
+</div>
 
   {/* botão para finalizar a compra */}
   {selectedItems.length > 0 && (
-    <div>
-      <h3>Itens selecionados:</h3>
-      <ul>
+    <div className="flex flex-col items-center justify-center">
+    <div className="p-4 mt-0">
+      <h3 className="text-lg font-semibold mb-2">Itens selecionados:</h3>
+      <ul className="list-disc pl-6 mb-2">
         {selectedItems.map((item) => (
           <li key={item.name}>{item.name} - € {parseFloat(item.price).toFixed(2)}</li>
         ))}
       </ul>
-      <button onClick={handleCheckout}>Finalizar compra</button>
-      <button onClick={cancelarCompra}>Cancelar</button>
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" onClick={handleCheckout}>Finalizar compra</button>
+      <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={cancelarCompra}>Cancelar</button>
     </div>
+  </div>
   )}
 
     </div>
