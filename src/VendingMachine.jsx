@@ -7,27 +7,35 @@ import { Link} from 'react-router-dom';
 
 function VendingMachine() {
 
+  const apiUrl = 'https://localhost:7136';
+
   const [quantidade, setQuantidade] = useState(0);
   const [total, setTotal] = useState(0);
   const [intro, setIntro] = useState(0);    
-  const [moedas, setMoedas] = useState([
-    { name: '1 cêntimo', price: 0.01},
-    { name: '2 cêntimos', price: 0.02},
-    { name: '5 cêntimos', price: 0.05},
-    { name: '10 cêntimos', price: 0.10},
-    { name: '20 cêntimos', price: 0.20},
-    { name: '50 cêntimos', price: 0.50},
-    { name: '1 euro', price: 1.00},
-    { name: '2 euros', price: 2.00}
-  ]);
+  const [moedas, setMoedas] = useState([]);
+
+  useEffect(() => {
+    debugger;
+    const fetchMoedas = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/api/Moedas/ListaDeMoedas`);
+        const moedasCarregadas = await response.json();
+  
+        setMoedas(moedasCarregadas);
+      } catch (error) {
+        console.error('Erro ao obter as moedas da API:', error);
+      }
+    };
+  
+    fetchMoedas();
+  }, []);
 
   
   /*Desta forma, quando a página for reiniciada, o código verificará se há itens armazenados no localStorage. Se houver, usará esses itens como valor inicial para o estado items.
   Caso contrário, usará os valores iniciais padrão. */  
   const [items, setItems] = useState([]);
   
-  const apiUrl = 'https://localhost:7136';
-  
+ 
   useEffect(() => {
     debugger;
     const fetchProducts = async () => {

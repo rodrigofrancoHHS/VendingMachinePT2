@@ -24,8 +24,6 @@ const Moedas = (props) => {
     }
   };
 
-  const FaltaPagar = props.total - props.intro;
-
   return (
 
     
